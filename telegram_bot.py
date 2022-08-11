@@ -27,7 +27,7 @@ class ProblemSolver(object):
         self.questionSolvedBefore = 0
         self.solvedToday = 0
         self.toPay = 0
-        self.message = self.userName + " Solved today " + self.solvedToday + " problem so he need to pay " + self.toPay + " Rs"
+        self.message = self.userName + " Solved today " + str(self.solvedToday) + " problem so he need to pay " + str(self.toPay) + " Rs."
     
     def getLeetCodeData(self):
         api = "https://leetcode-stats-api.herokuapp.com/"
@@ -114,3 +114,6 @@ if __name__ == '__main__':
 #https://api.telegram.org/bot5127123865:AAGcz2awrdlO0btmItQE1PFV6WWZj99SfyQ/getUpdates
 
 
+'''
+Stop crashing from bad command
+'''
