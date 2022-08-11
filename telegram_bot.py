@@ -38,7 +38,7 @@ class ProblemSolver(object):
     #This function take userName and question solved till yesterday    
     def amountToPayToday(self):
         amount = 30
-        self.getLeetCodeData(userName)
+        self.getLeetCodeData()
         self.toPay = 0 if ((self.solvedToday - self.questionSolvedBefore) > 0) else amount
         self.questionSolvedBefore += self.solvedToday
     
