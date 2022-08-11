@@ -8,11 +8,12 @@ https://cryptic-waters-99444.herokuapp.com/ | https://git.heroku.com/cryptic-wat
 import logging
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import os
+import requests
+
 PORT = int(os.environ.get('PORT', 5000))
 
 # Enable logging
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    level=logging.INFO)
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',level=logging.INFO)
 
 logger = logging.getLogger(__name__)
 TOKEN = '5127123865:AAGcz2awrdlO0btmItQE1PFV6WWZj99SfyQ'
@@ -27,6 +28,10 @@ def help(update, context):
     """Send a message when the command /help is issued."""
     update.message.reply_text('Help!')
 
+def stat(update, context):
+    message = getStat()
+    update.message.reply_text(message)
+    
 def echo(update, context):
     """Echo the user message."""
     update.message.reply_text(update.message.text)
@@ -48,9 +53,10 @@ def main():
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", help))
+    dp.add_handler(CommandHandler("stat", stat))
 
     # on noncommand i.e message - echo the message on Telegram
-    dp.add_handler(MessageHandler(Filters.text, echo))
+    #dp.add_handler(MessageHandler(Filters.text, echo))
 
     # log all errors
     dp.add_error_handler(error)
@@ -68,3 +74,39 @@ def main():
 
 if __name__ == '__main__':
     main()
+    
+    
+# grop id: -1001707646893
+
+#https://api.telegram.org/bot5127123865:AAGcz2awrdlO0btmItQE1PFV6WWZj99SfyQ/sendMessage?chat_id=-1001707646893&text=Hello%20World
+#https://api.telegram.org/bot5127123865:AAGcz2awrdlO0btmItQE1PFV6WWZj99SfyQ/getUpdates
+
+class ProblemSolver(object):
+    def __init__(self,userName):
+        self.userName = userName
+        self.questionSolvedBefore = 0
+        self.solvedToday = 0
+        self.toPay = 0
+        self.message = self.userName + " Solved today " + self.solvedToday + " problem so he need to pay " + self.toPay + " Rs"
+    
+    def getLeetCodeData(self):
+        api = ""https://leetcode-stats-api.herokuapp.com/"
+        response = requests.get(api+self.userName)
+    
+        self.solvedToday = response.json()['totalSolved']
+    
+    #This function take userName and question solved till yesterday    
+    def amountToPayToday(self):
+        amount = 30
+        self.getLeetCodeData(userName)
+        self.toPay = self.solvedToday - self.questionSolvedBefore > 0 ? 0 : amount
+        self.questionSolvedBefore += self.solvedToday
+    
+    def getMessage(self):
+        self.amountToPayToday()
+        return self.message
+  
+def getStat():
+    ProblemSolver p1 = new ProblemSolver('chiranjeetc40')
+    ProblemSolver p2 = new ProblemSolver('root_08')
+    return p1.getMessage() + " " +p2.getMessage()
