@@ -90,7 +90,7 @@ class ProblemSolver(object):
         self.message = self.userName + " Solved today " + self.solvedToday + " problem so he need to pay " + self.toPay + " Rs"
     
     def getLeetCodeData(self):
-        api = ""https://leetcode-stats-api.herokuapp.com/"
+        api = "https://leetcode-stats-api.herokuapp.com/"
         response = requests.get(api+self.userName)
     
         self.solvedToday = response.json()['totalSolved']
@@ -99,7 +99,7 @@ class ProblemSolver(object):
     def amountToPayToday(self):
         amount = 30
         self.getLeetCodeData(userName)
-        self.toPay = self.solvedToday - self.questionSolvedBefore > 0 ? 0 : amount
+        self.toPay = 0 if ((self.solvedToday - self.questionSolvedBefore) > 0) else amount
         self.questionSolvedBefore += self.solvedToday
     
     def getMessage(self):
@@ -107,6 +107,6 @@ class ProblemSolver(object):
         return self.message
   
 def getStat():
-    ProblemSolver p1 = new ProblemSolver('chiranjeetc40')
-    ProblemSolver p2 = new ProblemSolver('root_08')
+    p1 = ProblemSolver('chiranjeetc40')
+    p2 = ProblemSolver('root_08')
     return p1.getMessage() + " " +p2.getMessage()
