@@ -20,6 +20,38 @@ TOKEN = '5127123865:AAGcz2awrdlO0btmItQE1PFV6WWZj99SfyQ'
 
 # Define a few command handlers. These usually take the two arguments update and
 # context. Error handlers also receive the raised TelegramError object in error.
+
+class ProblemSolver(object):
+    def __init__(self,userName):
+        self.userName = userName
+        self.questionSolvedBefore = 0
+        self.solvedToday = 0
+        self.toPay = 0
+        self.message = self.userName + " Solved today " + self.solvedToday + " problem so he need to pay " + self.toPay + " Rs"
+    
+    def getLeetCodeData(self):
+        api = "https://leetcode-stats-api.herokuapp.com/"
+        response = requests.get(api+self.userName)
+    
+        self.solvedToday = response.json()['totalSolved']
+    
+    #This function take userName and question solved till yesterday    
+    def amountToPayToday(self):
+        amount = 30
+        self.getLeetCodeData(userName)
+        self.toPay = 0 if ((self.solvedToday - self.questionSolvedBefore) > 0) else amount
+        self.questionSolvedBefore += self.solvedToday
+    
+    def getMessage(self):
+        self.amountToPayToday()
+        return self.message
+
+
+def getStat():
+    p1 = ProblemSolver('chiranjeetc40')
+    p2 = ProblemSolver('root_08')
+    return p1.getMessage() + " " +p2.getMessage()
+    
 def start(update, context):
     """Send a message when the command /start is issued."""
     update.message.reply_text('Hi!')
@@ -81,32 +113,4 @@ if __name__ == '__main__':
 #https://api.telegram.org/bot5127123865:AAGcz2awrdlO0btmItQE1PFV6WWZj99SfyQ/sendMessage?chat_id=-1001707646893&text=Hello%20World
 #https://api.telegram.org/bot5127123865:AAGcz2awrdlO0btmItQE1PFV6WWZj99SfyQ/getUpdates
 
-class ProblemSolver(object):
-    def __init__(self,userName):
-        self.userName = userName
-        self.questionSolvedBefore = 0
-        self.solvedToday = 0
-        self.toPay = 0
-        self.message = self.userName + " Solved today " + self.solvedToday + " problem so he need to pay " + self.toPay + " Rs"
-    
-    def getLeetCodeData(self):
-        api = "https://leetcode-stats-api.herokuapp.com/"
-        response = requests.get(api+self.userName)
-    
-        self.solvedToday = response.json()['totalSolved']
-    
-    #This function take userName and question solved till yesterday    
-    def amountToPayToday(self):
-        amount = 30
-        self.getLeetCodeData(userName)
-        self.toPay = 0 if ((self.solvedToday - self.questionSolvedBefore) > 0) else amount
-        self.questionSolvedBefore += self.solvedToday
-    
-    def getMessage(self):
-        self.amountToPayToday()
-        return self.message
-  
-def getStat():
-    p1 = ProblemSolver('chiranjeetc40')
-    p2 = ProblemSolver('root_08')
-    return p1.getMessage() + " " +p2.getMessage()
+
