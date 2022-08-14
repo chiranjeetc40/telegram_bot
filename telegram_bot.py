@@ -8,8 +8,10 @@ https://cryptic-waters-99444.herokuapp.com/ | https://git.heroku.com/cryptic-wat
 import logging
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import os
+from apscheduler.schedulers.blocking import BlockingScheduler
 import requests
 
+sched = BlockingScheduler()
 PORT = int(os.environ.get('PORT', 5000))
 
 # Enable logging
@@ -21,36 +23,54 @@ TOKEN = '5127123865:AAGcz2awrdlO0btmItQE1PFV6WWZj99SfyQ'
 # Define a few command handlers. These usually take the two arguments update and
 # context. Error handlers also receive the raised TelegramError object in error.
 
+
+def getTotal(userName):
+    with open("D:/Code/workspace/python/telegram_bot/solved.txt","r") as storage:
+        for each_line in storage:
+            print(each_line)
+            user,total = each_line.split(":")
+            if(user==userName):
+                return total
+    return -1
+    
+    
 class ProblemSolver(object):
     def __init__(self,userName):
         self.userName = userName
-        self.questionSolvedBefore = 0
+        self.questionSolvedBefore = int(getTotal(self.userName))
         self.solvedToday = 0
         self.toPay = 0
-        self.message = self.userName + " Solved today " + str(self.solvedToday) + " problem so he need to pay " + str(self.toPay) + " Rs."
+        self.message = ""
     
     def getLeetCodeData(self):
-        api = "https://leetcode-stats-api.herokuapp.com/"
-        response = requests.get(api+self.userName)
-    
-        self.solvedToday = response.json()['totalSolved']
+        #api = "https://leetcode-stats-api.herokuapp.com/"
+        #response = requests.get(api+self.userName)
+        #print(response.json())
+        #self.solvedToday = response.json()['totalSolved']
+        totalSolved = 8
+        return totalSolved
     
     #This function take userName and question solved till yesterday    
     def amountToPayToday(self):
         amount = 30
-        self.getLeetCodeData()
-        self.toPay = 0 if ((self.solvedToday - self.questionSolvedBefore) > 0) else amount
-        self.questionSolvedBefore += self.solvedToday
-    
+        total = self.getLeetCodeData()
+        
+        self.solvedToday = total - self.questionSolvedBefore
+        self.toPay = 0 if self.solvedToday>0 else amount
+        self.questionSolvedBefore +=self.solvedToday
+        
     def getMessage(self):
         self.amountToPayToday()
+        self.message = self.userName + "\n Solved Today: " + str(self.solvedToday) + "\n Amount Payable: " + str(self.toPay) + " Rs.\n"
+        print(self.userName + " Solved Total " +  str(self.questionSolvedBefore) )
         return self.message
 
+p1 = ProblemSolver('chiranjeetc40')
+p2 = ProblemSolver('root_08')
 
 def getStat():
-    p1 = ProblemSolver('chiranjeetc40')
-    p2 = ProblemSolver('root_08')
-    return p1.getMessage() + " " +p2.getMessage()
+    return p1.getMessage() + "\n" +p2.getMessage()
+    
     
 def start(update, context):
     """Send a message when the command /start is issued."""
@@ -103,6 +123,8 @@ def main():
     # SIGTERM or SIGABRT. This should be used most of the time, since
     # start_polling() is non-blocking and will stop the bot gracefully.
     updater.idle()
+    
+    sched.start()
 
 if __name__ == '__main__':
     main()
@@ -113,7 +135,14 @@ if __name__ == '__main__':
 #https://api.telegram.org/bot5127123865:AAGcz2awrdlO0btmItQE1PFV6WWZj99SfyQ/sendMessage?chat_id=-1001707646893&text=Hello%20World
 #https://api.telegram.org/bot5127123865:AAGcz2awrdlO0btmItQE1PFV6WWZj99SfyQ/getUpdates
 
+@sched.scheduled_job('cron',[[p1,p2]], day_of_week='mon-sun', hour=23)
+def saveData(allUsers):
+    with open("D:/Code/workspace/python/telegram_bot/solved.txt","w") as storage:
+        for each_user in allUsers:
+            storage.write(each_user.userName+":"+str(each_user.questionSolvedBefore)+"\n")
+            
 
 '''
 Stop crashing from bad command
+create fix to run on local
 '''
