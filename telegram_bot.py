@@ -25,7 +25,7 @@ TOKEN = '5127123865:AAGcz2awrdlO0btmItQE1PFV6WWZj99SfyQ'
 
 
 def getTotal(userName):
-    with open("D:/Code/workspace/python/telegram_bot/solved.txt","r") as storage:
+    with open("solved.txt","r") as storage:
         for each_line in storage:
             print(each_line)
             user,total = each_line.split(":")
@@ -137,7 +137,7 @@ if __name__ == '__main__':
 
 @sched.scheduled_job('cron',[[p1,p2]], day_of_week='mon-sun', hour=23)
 def saveData(allUsers):
-    with open("D:/Code/workspace/python/telegram_bot/solved.txt","w") as storage:
+    with open("solved.txt","w") as storage:
         for each_user in allUsers:
             storage.write(each_user.userName+":"+str(each_user.questionSolvedBefore)+"\n")
             
