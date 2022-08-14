@@ -43,11 +43,10 @@ class ProblemSolver(object):
         self.message = ""
     
     def getLeetCodeData(self):
-        #api = "https://leetcode-stats-api.herokuapp.com/"
-        #response = requests.get(api+self.userName)
+        api = "https://leetcode-stats-api.herokuapp.com/"
+        response = requests.get(api+self.userName)
         #print(response.json())
-        #self.solvedToday = response.json()['totalSolved']
-        totalSolved = 8
+        totalSolved = response.json()['totalSolved']
         return totalSolved
     
     #This function take userName and question solved till yesterday    
