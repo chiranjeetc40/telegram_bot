@@ -43,10 +43,22 @@ class ProblemSolver(object):
         self.message = ""
     
     def getLeetCodeData(self):
-        api = "https://leetcode-stats-api.herokuapp.com/"
-        response = requests.get(api+self.userName)
+        query= """query {
+            matchedUser(username:"""+'''"'''+self.userName+'''"'''+""") {
+                username
+                submitStats: submitStatsGlobal {
+                    acSubmissionNum {
+                        difficulty
+                        count
+                        submissions
+                    }
+                }
+            }
+        }"""
+        api = 'https://leetcode.com/graphql'
+        response = requests.post(api, json={'query': query})
         #print(response.json())
-        totalSolved = response.json()['totalSolved']
+        totalSolved = response.json()['data']['matchedUser']['submitStats']['acSubmissionNum'][0]['count']
         return totalSolved
     
     #This function take userName and question solved till yesterday    
@@ -60,8 +72,8 @@ class ProblemSolver(object):
         
     def getMessage(self):
         self.amountToPayToday()
-        self.message = self.userName + "\n Solved Today: " + str(self.solvedToday) + "\n Amount Payable: " + str(self.toPay) + " Rs.\n"
-        print(self.userName + " Solved Total " +  str(self.questionSolvedBefore) )
+        self.message = self.userName + "\n Solved Today: " + str(self.solvedToday) + "\n Amount Payable: " + str(self.toPay) + " Rs.\n" + " Total Solved: "+str(self.questionSolvedBefore)+"\n"
+        #print(self.userName + " Solved Total " +  str(self.questionSolvedBefore) )
         return self.message
 
 p1 = ProblemSolver('chiranjeetc40')
